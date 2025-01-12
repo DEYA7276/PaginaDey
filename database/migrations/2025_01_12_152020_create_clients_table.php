@@ -12,14 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('clients', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_client');
+            $table->string('name', 100)->nullable()->default('Client');
+            $table->string('phone', 15)->nullable();
+            $table->string('email', 100)->nullable();
+            $table->timestamp('registration_date')->nullable()->useCurrent();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('clients');

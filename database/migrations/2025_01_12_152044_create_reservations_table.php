@@ -12,7 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reservations', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_reservation');
+            $table->unsignedBigInteger('id_client');
+            $table->unsignedBigInteger('id_table');
+            $table->dateTime('reservation_datetime')->nullable()->useCurrent(); 
+            $table->enum('status', ['pending', 'confirmed', 'canceled'])->nullable()->default('pending');
+            $table->foreign('id_client')->references('id_client')->on('clients')->onDelete('cascade');
+            $table->foreign('id_table')->references('id_table')->on('tables')->onDelete('cascade');
             $table->timestamps();
         });
     }
