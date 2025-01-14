@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Table extends Model
 {
     use HasFactory;
-
-    // Especificar la tabla si el nombre no sigue la convención plural
     protected $table = 'tables';
+    protected $primaryKey = 'id_table';
+    // Especificar la tabla si el nombre no sigue la convención plural
+    
 
     // Los atributos que pueden ser asignados masivamente
     protected $fillable = [
@@ -18,12 +19,14 @@ class Table extends Model
         'capacity',
         'location',
         'id_staff',
+        'id_table'
     ];
 
     // Relación con el modelo Staff (personal)
     public function staff()
     {
-        return $this->belongsTo(Staff::class, 'id_staff');
+        return $this->belongsTo(Staff::class, 'id_staff', 'id_staff');
+        
     }
 
     // Relación con el modelo Reservation (reservas)
@@ -31,4 +34,7 @@ class Table extends Model
     {
         return $this->hasMany(Reservation::class, 'id_table');
     }
+
+
+    
 }

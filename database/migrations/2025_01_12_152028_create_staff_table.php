@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name', 100)->nullable()->default('Employee');
             $table->string('role', 50)->nullable()->default('Role');
             $table->string('phone', 15)->nullable();
+            $table->string('photo',100)->nullable()->default('photo');
             $table->timestamps();
         });
     }

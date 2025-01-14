@@ -11,6 +11,7 @@ class Client extends Model
 
     // Especificar la tabla si el nombre no sigue la convención plural
     protected $table = 'clients';
+    protected $primaryKey = 'id_client';
 
     // Los atributos que pueden ser asignados masivamente
     protected $fillable = [

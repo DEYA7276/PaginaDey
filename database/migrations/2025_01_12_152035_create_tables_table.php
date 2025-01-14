@@ -12,14 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tables', function (Blueprint $table) {
-            $table->id('id_table');
-            $table->integer('table_number')->nullable()->default(1);
-            $table->integer('capacity')->nullable()->default(4);
-            $table->string('location', 50)->nullable()->default('Location');
-            $table->unsignedBigInteger('id_staff')->nullable();
-            $table->foreign('id_staff')->references('id_staff')->on('staff')->onDelete('set null');
+            $table->id('id_table');  // Esto asegura que el campo 'id_table' sea la clave primaria
+            $table->string('table_number');
+            $table->integer('capacity');
+            $table->string('location');
+            $table->unsignedBigInteger('id_staff');
+            $table->foreign('id_staff')->references('id_staff')->on('staff')->onDelete('cascade');
             $table->timestamps();
         });
+        
     }
 
     /**

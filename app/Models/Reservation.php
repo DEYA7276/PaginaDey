@@ -12,6 +12,7 @@ class Reservation extends Model
     // Especificar la tabla si el nombre no sigue la convención plural
     protected $table = 'reservations';
 
+    protected $primaryKey = 'id_reservation';
     // Los atributos que pueden ser asignados masivamente
     protected $fillable = [
         'id_client',
@@ -32,3 +33,6 @@ class Reservation extends Model
         return $this->belongsTo(Table::class, 'id_table');
     }
 }
+
+
+
