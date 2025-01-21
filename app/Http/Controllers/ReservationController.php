@@ -39,30 +39,36 @@ class ReservationController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        // Validación de datos del formulario
-        $validated = $request->validate([
-            'id_client' => 'required|exists:clients,id_client',
-            'id_table' => 'required|exists:tables,id_table',
-            'reservation_datetime' => 'required|date',
-            'status' => 'required|in:pending,confirmed,canceled',
-        ]);
+{
+    $request->validate([
+        'id_client' => 'required|exists:clients,id_client',
+        'id_table' => 'required|exists:tables,id_table',
+        'reservation_datetime' => 'required|date',
+        'status' => 'required|in:pending,confirmed,canceled',
+    ]);
 
-        // Verificar si la mesa ya está reservada en la misma fecha y hora
-        $existingReservation = Reservation::where('id_table', $request->id_table)
-            ->where('reservation_datetime', $request->reservation_datetime)
-            ->exists(); // Esto verificará si ya hay una reserva con esa mesa y fecha
+    $reservationDatetime = \Carbon\Carbon::parse($request->reservation_datetime);
+    $existingReservation = Reservation::where('id_table', $request->id_table)
+        ->whereBetween('reservation_datetime', [
+            $reservationDatetime->copy()->subMinutes(30),
+            $reservationDatetime->copy()->addMinutes(30),
+        ])
+        ->first();
 
-        if ($existingReservation) {
-            return back()->withErrors(['reservation_datetime' => 'La mesa ya está reservada en ese horario.'])->withInput();
-        }
-
-        // Crear la nueva reserva
-        Reservation::create($validated);
-
-        // Redirigir con mensaje de éxito
-        return redirect()->route('reservations.index')->with('status', 'Reserva realizada con éxito');
+    if ($existingReservation) {
+        return back()->withErrors(['msg' => 'Ya existe una reserva para esta mesa en este rango de tiempo.']);
     }
+
+    $reservation = new Reservation();
+    $reservation->id_client = $request->id_client;
+    $reservation->id_table = $request->id_table;
+    $reservation->reservation_datetime = $request->reservation_datetime;
+    $reservation->status = $request->status;
+    $reservation->save();
+
+    return redirect()->route('reservations.index')->with('success', 'Reserva creada exitosamente.');
+}
+
 
 
     
@@ -125,4 +131,24 @@ class ReservationController extends Controller
         // Redirigir a la lista de reservas con un mensaje de éxito
         return to_route('reservations.index')->with('status', 'Reservation deleted successfully');
     }
+
+
+    public function checkAvailability(Request $request)
+{
+    $reservationDatetime = \Carbon\Carbon::parse($request->reservation_datetime);
+    $existingReservation = Reservation::where('id_table', $request->id_table)
+        ->whereBetween('reservation_datetime', [
+            $reservationDatetime->copy()->subMinutes(30),
+            $reservationDatetime->copy()->addMinutes(30),
+        ])
+        ->first();
+
+    return response()->json([
+        'available' => !$existingReservation
+    ]);
+}
+
+
+
+
 }

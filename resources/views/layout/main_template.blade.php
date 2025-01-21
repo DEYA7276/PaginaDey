@@ -12,6 +12,7 @@
 <body style="background-color: rgb(192, 224, 247)">
 
 
+
     @include('fragments.navbar')
 
     @if (session('status'))

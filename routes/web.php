@@ -53,3 +53,5 @@ Route::resource('tables', TableController::class);
 
 
 Route::resource('reservations', ReservationController::class);
+Route::post('/reservations/check_availability', [ReservationController::class, 'checkAvailability'])->name('reservations.check_availability');
+Route::post('/tables/check-number-existence', [TableController::class, 'checkTableNumberExistence']);
